@@ -3,7 +3,7 @@ import random
 
 # Constants
 N = 5
-MAGIC_CONSTANT = 325  # Target sum for rows, columns, and diagonals
+MAGIC_CONSTANT = 315  # Target sum for rows, columns, and diagonals
 POPULATION_SIZE = 100
 MUTATION_RATE = 0.05
 GENERATIONS = 1000
@@ -20,9 +20,9 @@ def fitness(cube):
     
     # Rows, columns, and pillars in each dimension
     for i in range(N):
-        score += abs(np.sum(cube[i, :, :]) - MAGIC_CONSTANT)  # x-axis slices
-        score += abs(np.sum(cube[:, i, :]) - MAGIC_CONSTANT)  # y-axis slices
-        score += abs(np.sum(cube[:, :, i]) - MAGIC_CONSTANT)  # z-axis slices
+        score += abs(np.sum(cube[i, :, :]) - MAGIC_CONSTANT*N)  # x-axis slices
+        score += abs(np.sum(cube[:, i, :]) - MAGIC_CONSTANT*N)  # y-axis slices
+        score += abs(np.sum(cube[:, :, i]) - MAGIC_CONSTANT*N)  # z-axis slices
 
     # Diagonals in each 2D layer
     for i in range(N):
@@ -115,7 +115,7 @@ def genetic_algorithm():
     return best_cube, best_score
 
 # Run the Genetic Algorithm
-best_cube, best_score = genetic_algorithm()
-print("Best Cube Solution:")
-print(best_cube)
-print("Best Score:", best_score)
+# best_cube, best_score = genetic_algorithm()
+# print("Best Cube Solution:")
+# print(best_cube)
+# print("Best Score:", best_score)
