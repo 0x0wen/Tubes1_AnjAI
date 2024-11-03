@@ -23,7 +23,7 @@ NextJS based website.
 ## Backend Server
 Flask based server.
 ### How to run?
-1. Go into the `frontend` directory
+1. Go into the `backend` directory
 ```
     cd backend
 ```
