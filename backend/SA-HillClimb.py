@@ -1,11 +1,9 @@
 import numpy as np
-from itertools import product, combinations 
+from itertools import product
 import sys
 import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from cube import initialize_cube, fitness
-import time
+# import time
 
 #menghasilkan semua kemungkinan state tetangga dengan menukar 2 angka
 def generate_neighbors(cube):
@@ -59,13 +57,13 @@ def steepest_ascent_hill_climbing(cube):
     
     return current_state
 
-initial_cube = initialize_cube()
-# print(initial_cube)
-print("Initial Heuristic Score (Scrambled):", fitness(initial_cube))
-time_start = time.time()
-solved_cube = steepest_ascent_hill_climbing(initial_cube)
-time_end = time.time()
-print("Time taken:", time_end - time_start)
-print("Final Heuristic Score:", fitness(solved_cube))
-# print("Solved Cube:", solved_cube)
+# initial_cube = initialize_cube()
+# # print(initial_cube)
+# print("Initial Heuristic Score (Scrambled):", fitness(initial_cube))
+# time_start = time.time()
+# solved_cube = steepest_ascent_hill_climbing(initial_cube)
+# time_end = time.time()
+# print("Time taken:", time_end - time_start)
+# print("Final Heuristic Score:", fitness(solved_cube))
+# # print("Solved Cube:", solved_cube)
 

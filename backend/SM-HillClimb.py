@@ -1,12 +1,8 @@
 import numpy as np
-from itertools import product, combinations 
-import sys
-import os
+from itertools import product
 from concurrent.futures import ThreadPoolExecutor
-
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from cube import initialize_cube, fitness
-import time
+# import time
 
 #menghasilkan semua kemungkinan state tetangga dengan menukar 2 angka
 def generate_neighbors(cube):
@@ -52,7 +48,7 @@ def sideways_move_hill_climbing(cube, max_side_moves):
         # Find the neighbor with the highest heuristic score
         for neighbor in neighbors:
             neighbor_heuristic = fitness(neighbor)
-            if neighbor_heuristic < best_heuristic:
+            if neighbor_heuristic <= best_heuristic:
                 best_heuristic = neighbor_heuristic
                 best_neighbor = neighbor
         
@@ -79,9 +75,9 @@ def sideways_move_hill_climbing(cube, max_side_moves):
 initial_cube = initialize_cube()
 # print(initial_cube)
 print("Initial Heuristic Score (Scrambled):", fitness(initial_cube))
-time_start = time.time()
-solved_cube = sideways_move_hill_climbing(initial_cube)
-time_end = time.time()
-print("Time taken:", time_end - time_start)
+# time_start = time.time()
+solved_cube = sideways_move_hill_climbing(initial_cube, 3)
+# time_end = time.time()
+# print("Time taken:", time_end - time_start)
 print("Final Heuristic Score:", fitness(solved_cube))
 # print("Solved Cube:", solved_cube)
