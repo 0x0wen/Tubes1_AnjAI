@@ -37,11 +37,10 @@ ARR = np.array([[[25, 16, 80, 104, 90],
 def simulatedAnnealing(n, initialTemperature, coolingRate):
     currentSolution = initialize_cube()
     currentScore = fitness(currentSolution)
-    bestSolution = np.copy(currentSolution)
     temperature = initialTemperature
     sumStuck = 0
     print("Fisrt configuration (5x5x5 Magic Cube):")
-    print(bestSolution)
+    print(currentSolution)
     print(f"First score: {currentScore}")
 
     while temperature > 1:
@@ -68,7 +67,7 @@ def simulatedAnnealing(n, initialTemperature, coolingRate):
 
         temperature *= coolingRate
 
-    return bestSolution, currentScore, sumStuck
+    return currentSolution, currentScore, sumStuck
 
 n = 5 
 initialTemperature = 10000000000000000000000000
