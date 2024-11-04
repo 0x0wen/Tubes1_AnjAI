@@ -93,8 +93,32 @@ export default function Home() {
       }
     );
 
+    let objBot = new THREE.Object3D();
+    let mixer: THREE.AnimationMixer;
+    gltfLoader.load(
+      "/3dmodel/robocute.glb",
+      function (gltf) {
+        objBot = gltf.scene;
+        scene.add(objBot);
+
+        mixer = new THREE.AnimationMixer(objBot);
+        mixer.clipAction(gltf.animations[0]).play();
+
+        objBot.scale.set(40, 40, 40);
+        objBot.position.set(-85, 17, 22);
+        objBot.rotation.y = -2.9;
+        objBot.rotation.x = -0.1;
+      },
+      function (xhr) {
+        console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+      },
+      function (error) {
+        console.log("An error happened " + error);
+      }
+    );
+
     const light1 = new THREE.DirectionalLight(0xffffff, 1);
-    light1.position.set(400, 500, 300);
+    light1.position.set(400, 500, 300).normalize();
     scene.add(light1);
 
     const light = new THREE.AmbientLight(0xffffff, 0.6);
@@ -119,9 +143,40 @@ export default function Home() {
 
     controls.maxPolarAngle = Math.PI / 2.5;
 
+    let hoverTime = 0;
+
+    const maxOffsetX = 5;
+    const maxOffsetY = 3;
+    const maxOffsetZ = 5;
+
     const animate = () => {
       requestAnimationFrame(animate);
 
+      hoverTime += 0.01;
+      // Set the base position and apply limits to the wandering effect
+      const basePosition = { x: -85, y: 17, z: 22 };
+
+      // Oscillate position with limits on each axis
+      objBot.position.x =
+        basePosition.x +
+        Math.max(
+          -maxOffsetX,
+          Math.min(maxOffsetX, Math.sin(hoverTime) * maxOffsetX)
+        );
+      objBot.position.y =
+        basePosition.y +
+        Math.max(
+          -maxOffsetY,
+          Math.min(maxOffsetY, Math.sin(hoverTime * 0.5) * maxOffsetY)
+        );
+      objBot.position.z =
+        basePosition.z +
+        Math.max(
+          -maxOffsetZ,
+          Math.min(maxOffsetZ, Math.cos(hoverTime) * maxOffsetZ)
+        );
+
+      if (mixer) mixer.update(0.016);
       controls.update();
 
       renderer.render(scene, camera);
@@ -227,7 +282,7 @@ export default function Home() {
     setTemp(-1);
     setCool(-1);
     setThres(-1);
-  }
+  };
 
   const [GA, setGA] = useState({ pop: -1, iter: -1 });
   const [maxSide, setMaxSide] = useState(-1);
@@ -383,7 +438,7 @@ export default function Home() {
       return;
     }
   };
-  
+
   const sendRequest = async (route: string) => {
     setAlgoLoading(true);
 
