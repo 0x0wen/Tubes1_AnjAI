@@ -2,25 +2,25 @@ import * as THREE from "three";
 
 export default class MagicCube {
   constructor() {
-    this.cubes = [];
+    this.initial = [];
     this.WholeCube = new THREE.Group();
-    this.WholeCube.name = "DMCube";
+    this.final = [];
   }
 
   getCubesLevel(level) {
-    return this.cubes.filter((cube) => cube.position.y === level);
+    return this.initial.filter((cube) => cube.position.y === level);
   }
 
   getCubesRow(row) {
-    return this.cubes.filter((cube) => cube.position.z === row);
+    return this.initial.filter((cube) => cube.position.z === row);
   }
 
   getCubesColumn(column) {
-    return this.cubes.filter((cube) => cube.position.x === column);
+    return this.initial.filter((cube) => cube.position.x === column);
   }
 
   getCube(x, y, z) {
-    return this.cubes.find(
+    return this.initial.find(
       (cube) =>
         cube.position.x === x && cube.position.y === y && cube.position.z === z
     );
@@ -42,10 +42,10 @@ export default class MagicCube {
     const context = canvas.getContext("2d");
 
     if (context) {
-      context.fillStyle = `#${color.toString(16).padStart(6, "0")}`;
+      context.fillStyle = `#${color}`;
       context.fillRect(0, 0, size, size);
 
-      context.fillStyle = "#000000";
+      context.fillStyle = "black";
       context.font = "bold 100px Arial";
       context.textAlign = "center";
       context.textBaseline = "middle";
@@ -58,12 +58,12 @@ export default class MagicCube {
 
   createNumberedMaterials(number) {
     return [
-      this.createNumberedMaterial(number, 0xff0000),
-      this.createNumberedMaterial(number, 0x00ff00),
-      this.createNumberedMaterial(number, 0x0000ff),
-      this.createNumberedMaterial(number, 0xffff00),
-      this.createNumberedMaterial(number, 0xff00ff),
-      this.createNumberedMaterial(number, 0x00ffff),
+      this.createNumberedMaterial(number, "FF6868"),
+      this.createNumberedMaterial(number, "72BF78"),
+      this.createNumberedMaterial(number, "87A2FF"),
+      this.createNumberedMaterial(number, "FFE700"),
+      this.createNumberedMaterial(number, "FFB0B0"),
+      this.createNumberedMaterial(number, "B7E0FF"),
     ];
   }
 
@@ -88,6 +88,32 @@ export default class MagicCube {
 
   generateCube() {
     const numbers = this.shuffleNumbers();
+
+    let index = 0;
+
+    let gap = 4.05;
+
+    for (let y = 0; y < 5; y++) {
+      let level = [];
+      for (let z = 0; z < 5; z++) {
+        let row = [];
+        for (let x = 0; x < 5; x++) {
+          const number = numbers[index++];
+          this.createCube(x * gap, y * gap, z * gap, number);
+          row.push(number);
+        }
+        level.push(row);
+      }
+      this.initial.push(level);
+    }
+
+    this.WholeCube.position.set(-8, -8, -8);
+  }
+
+  createCubeWithNumbers(numbers) {
+    this.WholeCube.clear();
+    this.initial = [];
+
     let index = 0;
 
     let gap = 4.05;
@@ -104,13 +130,26 @@ export default class MagicCube {
         }
         level.push(row);
       }
-      this.cubes.push(level);
-    } 
+      this.initial.push(level);
+    }
 
     this.WholeCube.position.set(-8, -8, -8);
+  }
 
-    // console.log(this.cubes);
+  createCubeWithMatric(matric) {
+    this.WholeCube.clear();
+    let gap = 4.05;
 
+    for (let y = 0; y < 5; y++) {
+      for (let z = 0; z < 5; z++) {
+        for (let x = 0; x < 5; x++) {
+          const number = matric[y][z][x];
+          this.createCube(x * gap, y * gap, z * gap, number);
+        }
+      }
+    }
+
+    this.WholeCube.position.set(-8, -8, -8);
   }
 
   visibleOnlyOneLevel(level) {
@@ -128,25 +167,25 @@ export default class MagicCube {
 
   reshuffleCube() {
     this.WholeCube.clear();
-
-    this.cubes = [];
+    this.initial = [];
     this.generateCube();
   }
 
-
-  showXYZ(){
-    this.cubes.forEach((level) => {
+  showXYZ() {
+    this.initial.forEach((level) => {
       level.forEach((row) => {
         row.forEach((number) => {
           let cube = this.getOne3Cube(number);
           let cubePos = cube.position;
-          console.log(`x: ${cubePos.x}, y: ${cubePos.y}, z: ${cubePos.z}, number: ${number}`);
+          console.log(
+            `x: ${cubePos.x}, y: ${cubePos.y}, z: ${cubePos.z}, number: ${number}`
+          );
         });
       });
     });
   }
 
-  switchCube(number1, number2){
+  switchCube(number1, number2) {
     let cube1 = this.getOne3Cube(number1);
     let cube2 = this.getOne3Cube(number2);
     let cube1Pos = cube1.position;
@@ -154,8 +193,9 @@ export default class MagicCube {
     cube1.position.set(cube2Pos.x, cube2Pos.y, cube2Pos.z);
     cube2.position.set(cube1Pos.x, cube1Pos.y, cube1Pos.z);
 
-    this.cubes[cube1Pos.y/4.05][cube1Pos.z/4.05][cube1Pos.x/4.05] = number2;
-    this.cubes[cube2Pos.y/4.05][cube2Pos.z/4.05][cube2Pos.x/4.05] = number1;
-
+    this.initial[cube1Pos.y / 4.05][cube1Pos.z / 4.05][cube1Pos.x / 4.05] =
+      number2;
+    this.initial[cube2Pos.y / 4.05][cube2Pos.z / 4.05][cube2Pos.x / 4.05] =
+      number1;
   }
 }

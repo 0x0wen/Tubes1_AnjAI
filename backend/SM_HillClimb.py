@@ -72,12 +72,12 @@ def sideways_move_hill_climbing(cube, max_side_moves):
     
     return current_state
 
-initial_cube = initialize_cube()
-# print(initial_cube)
-print("Initial Heuristic Score (Scrambled):", fitness(initial_cube))
-# time_start = time.time()
-solved_cube = sideways_move_hill_climbing(initial_cube, 3)
-# time_end = time.time()
-# print("Time taken:", time_end - time_start)
-print("Final Heuristic Score:", fitness(solved_cube))
+# initial_cube = initialize_cube()
+# # print(initial_cube)
+# print("Initial Heuristic Score (Scrambled):", fitness(initial_cube))
+# # time_start = time.time()
+# solved_cube = sideways_move_hill_climbing(initial_cube, 3)
+# # time_end = time.time()
+# # print("Time taken:", time_end - time_start)
+# print("Final Heuristic Score:", fitness(solved_cube))
 # print("Solved Cube:", solved_cube)

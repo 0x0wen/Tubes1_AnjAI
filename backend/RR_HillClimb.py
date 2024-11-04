@@ -25,12 +25,11 @@ def generate_neighbors(cube):
     return neighbors
 
 # Hill Climbing Algorithm
-def random_restart_hill_climbing(restart_limit):
+def random_restart_hill_climbing(restart_limit, cube):
     optimal_states = []
     
     for _ in range(restart_limit):
-        current_state = initialize_cube()
-        current_heuristic = fitness(current_state)
+        current_heuristic = fitness(cube)
         iterations = 1  # Track the number of iterations
         
         while True:

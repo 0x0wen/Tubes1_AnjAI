@@ -97,7 +97,7 @@ export default function Home() {
     light1.position.set(400, 500, 300);
     scene.add(light1);
 
-    const light = new THREE.AmbientLight(0xffffff, 1);
+    const light = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(light);
 
     cube.generateCube();
@@ -161,10 +161,10 @@ export default function Home() {
   };
 
   const algoOptions = (algo: string) => {
-    
     console.log(algo);
 
     setResults({});
+    clearAllFields();
 
     if (activeAlgo === algo) {
       setActiveAlgo("");
@@ -206,156 +206,210 @@ export default function Home() {
     cube.showXYZ();
   };
 
+  const showerror = (what: string) => {
+    toast.error(what, {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+      transition: Bounce,
+    });
+  };
+
+  const clearAllFields = () => {
+    setGA({ pop: -1, iter: -1 });
+    setMaxSide(-1);
+    setRestarts(-1);
+    setTemp(-1);
+    setCool(-1);
+    setThres(-1);
+  }
+
   const [GA, setGA] = useState({ pop: -1, iter: -1 });
   const [maxSide, setMaxSide] = useState(-1);
   const [restarts, setRestarts] = useState(-1);
+  const [temp, setTemp] = useState(-1);
+  const [cool, setCool] = useState(-1);
+  const [thres, setThres] = useState(-1);
 
   const inputNumber = (target: HTMLInputElement, what: string) => {
-    target.value = target.value.replace(/[^0-9]/g, "");
+    target.value = target.value.replace(/[^0-9.]/g, "");
     console.log(target.value, what);
+    let err = false;
 
-    if (isNaN(parseInt(target.value))) {
+    if (target.value === "") {
+      console.log("empty");
+      if (what === "popGA") {
+        setGA({ ...GA, pop: -1 });
+      } else if (what === "iterGA") {
+        setGA({ ...GA, iter: -1 });
+      } else if (what === "maxSide") {
+        setMaxSide(-1);
+      } else if (what === "restarts") {
+        setRestarts(-1);
+      } else if (what === "temp") {
+        setTemp(-1);
+      } else if (what === "cool") {
+        setCool(-1);
+      } else if (what === "thres") {
+        setThres(-1);
+      } else {
+        console.log("error");
+      }
       return;
     }
 
-    if (what === "popGA") {
-      setGA({ ...GA, pop: parseInt(target.value) });
+    const val = parseInt(target.value);
 
+    if (what === "popGA") {
+      setGA({ ...GA, pop: val });
       console.log("GA: ", GA);
     } else if (what === "iterGA") {
-      setGA({ ...GA, iter: parseInt(target.value) });
-
+      setGA({ ...GA, iter: val });
       console.log("GA: ", GA);
     } else if (what === "maxSide") {
-      setMaxSide(parseInt(target.value));
+      if (val < 1) {
+        showerror("Max side must be greater than 1");
+        err = true;
+      } else {
+        setMaxSide(val);
+      }
       console.log("maxSide: ", maxSide);
     } else if (what === "restarts") {
-      setRestarts(parseInt(target.value));
+      if (val < 1) {
+        showerror("Restarts must be greater or equal to 1");
+        err = true;
+      } else {
+        setRestarts(val);
+      }
       console.log("restarts: ", restarts);
+    } else if (what === "temp") {
+      if (val < 1) {
+        showerror("Temperature must be greater or equal to 1");
+        err = true;
+      } else {
+        setTemp(val);
+      }
+      console.log("temp: ", temp);
+    } else if (what === "cool") {
+      if (val < 0 || val > 1) {
+        showerror("Cooling rate must be between 0 and 1");
+        err = true;
+      } else {
+        setCool(val);
+      }
+      console.log("cool: ", cool);
+    } else if (what === "thres") {
+      if (val < 0 || val > 1) {
+        showerror("Threshold must be between 0 and 1");
+        err = true;
+      } else {
+        setThres(val);
+      }
+      console.log("thres: ", thres);
     } else {
       console.log("error");
+    }
+
+    if (err) {
+      target.value = "";
     }
   };
 
   const [resultsObj, setResults] = useState({});
+  const [activeState, setActiveState] = useState("final");
+  const [algoLoading, setAlgoLoading] = useState(false);
+
+  const changeState = (state: string) => {
+    setActiveState(state);
+    if (state === "initial") {
+      cube.createCubeWithMatric(cube.initial);
+    } else {
+      cube.createCubeWithMatric(cube.final);
+    }
+  };
+
+  const sendData: { [key: string]: number | number[][][] } = {};
 
   const onSubmit = () => {
     console.log("Algorithm: ", activeAlgo);
 
-    if (activeAlgo === "") {
-      toast.error("Please select an algorithm", {
-        position: "top-center",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "colored",
-        transition: Bounce,
-      });
-      return;
-    }
-
     if (activeAlgo === "HC") {
-      if (HC === "") {
-        toast.error("Please select an option for Hill-climbing", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
-        return;
-      } else if (HC === "steep") {
-        console.log("Hill-climbing Steepest ascent");
-        // sendRequest('/HC/steep');
+      if (HC === "steep") {
+        sendRequest("/api/hill-climbing/steep");
       } else if (HC === "side") {
-        console.log("Hill-climbing Sideways move");
         if (maxSide === -1) {
-          toast.error("Please enter max iterations", {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            transition: Bounce,
-          });
+          showerror("Please enter max move");
           return;
-          // sendRequest('/HC/side');
         }
+        sendData["maxSide"] = maxSide;
+        sendRequest("/api/hill-climbing/side");
       } else if (HC === "stoc") {
-        console.log("Hill-climbing Stochastic");
-        // sendRequest('/HC/stoc');
+        sendRequest("/api/hill-climbing/stoc");
       } else if (HC === "rando") {
-        console.log("Hill-climbing Random restart");
-        // sendRequest('/HC/rando');
         if (restarts === -1) {
-          toast.error("Please enter max restarts", {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            transition: Bounce,
-          });
+          showerror("Please enter max restarts");
           return;
         }
+        sendData["restarts"] = restarts;
+        sendRequest("/api/hill-climbing/rando");
       } else {
-        console.log("Hill-climbing");
-        // sendRequest('/HC');
+        showerror("Please select a hill-climbing algorithm");
+        return;
       }
     } else if (activeAlgo === "SA") {
-      console.log("Simulated Annealing");
-      // sendRequest('/SA');
-    } else if (activeAlgo === "GA") {
-      console.log("Genetic Algorithm");
-      console.log("GA inputs: ", GA);
-      if (GA.pop === -1 || GA.iter === -1) {
-        toast.error("Please enter population and iterations", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
+      if (thres === -1 || temp === -1 || cool === -1) {
+        showerror("Please enter threshold, temperature and cooling rate");
         return;
       }
-      // sendRequest('/GA');
+      sendData["thres"] = thres;
+      sendData["temp"] = temp;
+      sendData["cool"] = cool;
+      sendRequest("/api/simulated-annealing");
+    } else if (activeAlgo === "GA") {
+      if (GA.pop === -1 || GA.iter === -1) {
+        showerror("Please enter population and iterations");
+        return;
+      }
+      sendData["pop"] = GA.pop;
+      sendData["iter"] = GA.iter;
+      sendRequest("/api/genetic-algorithm");
     } else {
-      console.log("error");
+      showerror("Please select an algorithm");
+      return;
     }
-
-    setResults({ objective: 123123123, duration: 123123123 });
-
-    console.log("Results: ", resultsObj);
   };
+  
+  const sendRequest = async (route: string) => {
+    setAlgoLoading(true);
 
-  // const sendRequest = async (route: string) => {
-  //   console.log(process.env)
-  //   let response;
-  //   try{
-  //      response = await fetch('http://localhost:5000' + route);
-  //   }catch(err){
-  //     console.log(err);
-  //   }
-  //   const text = await response?.text();
-  //   alert(text);
-  // };
+    sendData["cube"] = cube.initial;
+
+    console.log("Data: ", sendData);
+
+    console.log(process.env);
+    let response;
+    try {
+      response = await fetch("http://localhost:5000" + route, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(sendData),
+      });
+    } catch (err) {
+      console.log(err);
+    }
+    const text = await response?.text();
+
+    setAlgoLoading(false);
+
+    alert(text);
+  };
   return (
     <div>
       <canvas id="bg"></canvas>
@@ -372,7 +426,7 @@ export default function Home() {
       ) : null}
 
       {scramLoaded ? (
-        <section id="scram">
+        <section className="loadOverlay">
           <Image
             src="/gif/loadscram.gif"
             alt="loading"
@@ -380,6 +434,18 @@ export default function Home() {
             height={200}
           />
           <label htmlFor="loadbar">Scrambling...</label>
+        </section>
+      ) : null}
+
+      {algoLoading ? (
+        <section className="loadOverlay">
+          <Image
+            src="/gif/loadAlgo.gif"
+            alt="loading"
+            width={300}
+            height={300}
+          />
+          <label htmlFor="loadbar">Loading...</label>
         </section>
       ) : null}
 
@@ -502,6 +568,37 @@ export default function Home() {
                 >
                   Simulated Annealing
                 </button>
+                {activeAlgo === "SA" ? (
+                  <section className="inputs" id="">
+                    <div>
+                      <label htmlFor="thres">Threshold</label>
+                      <input
+                        type="text"
+                        id="thres"
+                        placeholder="Enter number of threshold"
+                        onChange={(e) => inputNumber(e.target, "thres")}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="temp">Temperature</label>
+                      <input
+                        type="text"
+                        id="temp"
+                        placeholder="Enter number of temperature"
+                        onChange={(e) => inputNumber(e.target, "temp")}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="cool">Cooling rate</label>
+                      <input
+                        type="text"
+                        id="cool"
+                        placeholder="Enter number of cooling rate"
+                        onChange={(e) => inputNumber(e.target, "cool")}
+                      />
+                    </div>
+                  </section>
+                ) : null}
                 <button
                   className={`button algo ${
                     activeAlgo === "GA" ? "active" : ""
@@ -532,17 +629,34 @@ export default function Home() {
                     </div>
                   </section>
                 ) : null}
-                <section>
-                  <div>
-                    <label htmlFor="n"></label>
-                  </div>
-                </section>
+                <section></section>
                 <button className="button" onClick={scramble}>
                   Scramble
                 </button>
                 <button onClick={onSubmit} className="button">
                   Solve
                 </button>
+                {Object.keys(resultsObj).length > 0 ? (
+                  <section className="states">
+                    <label htmlFor="state">State</label>
+                    <div>
+                      <button
+                        onClick={() => changeState("initial")}
+                        className={`${
+                          activeState === "initial" ? "active" : ""
+                        }`}
+                      >
+                        Initial
+                      </button>
+                      <button
+                        onClick={() => changeState("final")}
+                        className={`${activeState === "final" ? "active" : ""}`}
+                      >
+                        Final
+                      </button>
+                    </div>
+                  </section>
+                ) : null}
               </section>
             </aside>
           </div>

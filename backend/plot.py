@@ -22,7 +22,35 @@ def save_plot():
     plugins.connect(fig, tooltip)
 
     # Generate the HTML from mpld3
-    html_str = mpld3.fig_to_html(fig)
+    html_fragment    = mpld3.fig_to_html(fig)
+    
+    html_str = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Objective Function vs. Iterations</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }}
+            .plot-container {{
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                background-color: #f0f0f0;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="plot-container">
+            {html_fragment}
+        </div>
+    </body>
+    </html>
+    """
     
     with open("../frontend/public/plot/plotObjFunc.html", "w") as f:
         f.write(html_str)
