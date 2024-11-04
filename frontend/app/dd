@@ -1,0 +1,36 @@
+      <main className='grid grid-cols-5'>
+        <div className=' aspect-square w-full h-full flex flex-col gap-6'>
+          <p>Hai</p>
+          <button className='px-4 py-2 bg-blue-500 opacity-80 rounded-full' onClick={stopAnimation}>Stop Animation</button>
+          <button className=' px-4 py-2 bg-blue-500 opacity-80 rounded-full hover:opacity-100 hover:underline w-full' onClick={()=>sendRequest('/')}>Hit the root URL</button>
+          <button className=' px-4 py-2 bg-blue-500 opacity-80 rounded-full hover:opacity-100 hover:underline w-full' onClick={()=>sendRequest('/api/hill-climbing')}>Hit the Hill-climbing API</button>
+          <button className=' px-4 py-2 bg-blue-500 opacity-80 rounded-full hover:opacity-100 hover:underline w-full' onClick={()=>sendRequest('/api/simulated-annealing')}>Hit the Simulated Annealing API</button>
+          <button className=' px-4 py-2 bg-blue-500 opacity-80 rounded-full hover:opacity-100 hover:underline w-full' onClick={()=>sendRequest('/api/genetic-algorithm')}>Hit the Genetic Algorithm API</button>  
+        </div>
+      </main>
+
+cube.createCube(0, 2, 0, 0);
+cube.createCube(4, 2, 0, 40);
+cube.createCube(-4, 2, 0, -40);
+cube.createCube(-8, 2, 0, -80);
+cube.createCube(8, 2, 0, 80);
+cube.createCube(0, 2, 4, 4);
+cube.createCube(0, 2, -4, -4);
+cube.createCube(0, 2, -8, -8);
+cube.createCube(0, 2, 8, 10);
+cube.createCube(4, 2, 4, 10);
+cube.createCube(-4, 2, 4, 10);
+cube.createCube(-4, 2, -4, 10);
+cube.createCube(4, 2, -4, 10);
+cube.createCube(4, 2, 8, 10);
+cube.createCube(-4, 2, 8, 10);
+cube.createCube(-4, 2, -8, 10);
+cube.createCube(4, 2, -8, 10);
+cube.createCube(8, 2, 4, 10);
+cube.createCube(8, 2, -4, 10);
+cube.createCube(8, 2, 8, 88);
+cube.createCube(8, 2, -8, 88);
+cube.createCube(-8, 2, 4, 10);
+cube.createCube(-8, 2, -4, 10);
+cube.createCube(-8, 2, -8, 88);
+cube.createCube(-8, 2, 8, -88);
