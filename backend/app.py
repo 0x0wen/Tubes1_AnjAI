@@ -132,7 +132,9 @@ def simulatedAnneal():
     
     finalState = currentSolution.tolist()
     
-    save_plot(iteration, acceptanceProbabilities,"plotAcceptanceProb")
+    save_plot(iteration +1, fitnesses,"plotObjFunc")
+    
+    save_plot(iteration +1, acceptanceProbabilities,"plotAcceptanceProb")
     
     response = {
         "finalstate": finalState,
