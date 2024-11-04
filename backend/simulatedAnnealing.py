@@ -39,9 +39,8 @@ def createNewSolution(newSolution):
     newSolution[i1][j1][k1], newSolution[i2][j2][k2] = newSolution[i2][j2][k2], newSolution[i1][j1][k1]
     return newSolution
 
-def simulatedAnnealing(n, initialTemperature, coolingRate, threshold):
-    currentSolution = initialize_cube()
-    currentScore = fitness(currentSolution)
+def simulatedAnnealing(cube, initialTemperature, coolingRate, threshold):
+    currentScore = fitness(cube)
     temperature = initialTemperature
     sumStuck = 0
     iteration = 0
@@ -80,18 +79,18 @@ def simulatedAnnealing(n, initialTemperature, coolingRate, threshold):
     
     return currentSolution, currentScore, sumStuck, iteration, fitnesses, acceptanceProbabilities, states
 
-n = 5 
-initialTemperature = 100000
-coolingRate = 0.9999
-threshold = 0.99
-startTime = time.time()
+# n = 5 
+# initialTemperature = 100000
+# coolingRate = 0.9999
+# threshold = 0.99
+# startTime = time.time()
 
-bestSolution, bestScore, sumStuck, iteration, fitnesses, acceptanceProbabilities, states = simulatedAnnealing(n, initialTemperature, coolingRate, threshold)
-endTime = time.time()
+# bestSolution, bestScore, sumStuck, iteration, fitnesses, acceptanceProbabilities, states = simulatedAnnealing(n, initialTemperature, coolingRate, threshold)
+# endTime = time.time()
 
-print("Best configuration (5x5x5 Magic Cube):")
-print(bestSolution)
-print(f"Best score: {bestScore}")
-print(f"Stuck in local optima: {sumStuck}")
-duration = endTime - startTime
-print(f"Duration: {duration} second")
+# print("Best configuration (5x5x5 Magic Cube):")
+# print(bestSolution)
+# print(f"Best score: {bestScore}")
+# print(f"Stuck in local optima: {sumStuck}")
+# duration = endTime - startTime
+# print(f"Duration: {duration} second")

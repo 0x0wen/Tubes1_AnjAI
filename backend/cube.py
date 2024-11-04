@@ -31,6 +31,8 @@ def fitness(cube):
     score += abs(np.sum([cube[i, i, i] for i in range(MAGIC_CUBE_SIZE)]) - MAGIC_CONSTANT)
     score += abs(np.sum([cube[i, i, MAGIC_CUBE_SIZE - i - 1] for i in range(MAGIC_CUBE_SIZE)]) - MAGIC_CONSTANT)
 
+    score = int(score)
+    
     return score
 
 # Initialize a population of cubes

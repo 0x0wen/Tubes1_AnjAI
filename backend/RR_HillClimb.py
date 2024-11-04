@@ -30,15 +30,15 @@ def random_restart_hill_climbing(restart_limit, cube):
     iterations = []  # iterasi per restart
     wholeIterations = 1  # iterasi total dari algoritma
     fitnesses = [] # fitness total dari algoritma
+    start = time.time()
     
     for _ in range(restart_limit):
         current_heuristic = fitness(cube)
         iteration = 1  # Track the number of iterations
         
-        start = time.time()
         while True:
             #mulai time
-            neighbors = generate_neighbors(current_state)
+            neighbors = generate_neighbors(cube)
             best_neighbor = None
             best_heuristic = current_heuristic
             
@@ -51,12 +51,12 @@ def random_restart_hill_climbing(restart_limit, cube):
             
             # If no better neighbor is found, terminate
             if best_neighbor is None:
-                optimal_states.append(current_state)
+                optimal_states.append(cube)
                 iterations.append(iteration)
                 break
             
             # Move to the best neighbor
-            current_state = best_neighbor
+            cube = best_neighbor
             current_heuristic = best_heuristic
             print(iteration, current_heuristic)
             fitnesses.append(current_heuristic)

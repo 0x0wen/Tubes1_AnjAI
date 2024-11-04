@@ -13,6 +13,17 @@ import { useEffect, useState, useMemo } from "react";
 import MagicCube from "./models/3cube";
 import Image from "next/image";
 
+interface ResultsProps {
+  finalstate: number[];
+  time_taken: number;
+  hurestic: number;
+  iterations: number;
+  algorithm: string;
+  restarts: number;
+  iterRestarts: number;
+  frekuensi: number;
+}
+
 export default function Home() {
   const [load, setLoad] = useState(true);
   const cube = useMemo(() => new MagicCube(), []);
@@ -218,7 +229,16 @@ export default function Home() {
   const algoOptions = (algo: string) => {
     console.log(algo);
 
-    setResults({});
+    setResults({
+      finalstate: [],
+      time_taken: 0,
+      hurestic: 0,
+      iterations: 0,
+      algorithm: "",
+      restarts: 0,
+      iterRestarts: 0,
+      frekuensi: 0,
+    });
     clearAllFields();
 
     if (activeAlgo === algo) {
@@ -236,6 +256,16 @@ export default function Home() {
   };
 
   const scramble = () => {
+    setResults({
+      finalstate: [],
+      time_taken: 0,
+      hurestic: 0,
+      iterations: 0,
+      algorithm: "",
+      restarts: 0,
+      iterRestarts: 0,
+      frekuensi: 0,
+    });
     setScramLoaded(true);
     setTimeout(() => {
       cube.reshuffleCube();
@@ -279,7 +309,7 @@ export default function Home() {
     setGA({ pop: -1, iter: -1 });
     setMaxSide(-1);
     setRestarts(-1);
-    setTemp(-1);
+    setTemp(-1.0);
     setCool(-1);
     setThres(-1);
   };
@@ -288,8 +318,8 @@ export default function Home() {
   const [maxSide, setMaxSide] = useState(-1);
   const [restarts, setRestarts] = useState(-1);
   const [temp, setTemp] = useState(-1);
-  const [cool, setCool] = useState(-1);
-  const [thres, setThres] = useState(-1);
+  const [cool, setCool] = useState(-1.0);
+  const [thres, setThres] = useState(-1.0);
 
   const inputNumber = (target: HTMLInputElement, what: string) => {
     target.value = target.value.replace(/[^0-9.]/g, "");
@@ -309,61 +339,59 @@ export default function Home() {
       } else if (what === "temp") {
         setTemp(-1);
       } else if (what === "cool") {
-        setCool(-1);
+        setCool(-1.0);
       } else if (what === "thres") {
-        setThres(-1);
+        setThres(-1.0);
       } else {
         console.log("error");
       }
       return;
     }
 
-    const val = parseInt(target.value);
-
     if (what === "popGA") {
-      setGA({ ...GA, pop: val });
+      setGA({ ...GA, pop: parseInt(target.value) });
       console.log("GA: ", GA);
     } else if (what === "iterGA") {
-      setGA({ ...GA, iter: val });
+      setGA({ ...GA, iter: parseInt(target.value) });
       console.log("GA: ", GA);
     } else if (what === "maxSide") {
-      if (val < 1) {
+      if (parseInt(target.value) < 1) {
         showerror("Max side must be greater than 1");
         err = true;
       } else {
-        setMaxSide(val);
+        setMaxSide(parseInt(target.value));
       }
       console.log("maxSide: ", maxSide);
     } else if (what === "restarts") {
-      if (val < 1) {
+      if (parseInt(target.value) < 1) {
         showerror("Restarts must be greater or equal to 1");
         err = true;
       } else {
-        setRestarts(val);
+        setRestarts(parseInt(target.value));
       }
       console.log("restarts: ", restarts);
     } else if (what === "temp") {
-      if (val < 1) {
+      if (parseFloat(target.value) < 1) {
         showerror("Temperature must be greater or equal to 1");
         err = true;
       } else {
-        setTemp(val);
+        setTemp(parseInt(target.value));
       }
       console.log("temp: ", temp);
     } else if (what === "cool") {
-      if (val < 0 || val > 1) {
+      if (parseInt(target.value) < 0 || parseInt(target.value) > 1) {
         showerror("Cooling rate must be between 0 and 1");
         err = true;
       } else {
-        setCool(val);
+        setCool(parseInt(target.value));
       }
       console.log("cool: ", cool);
     } else if (what === "thres") {
-      if (val < 0 || val > 1) {
+      if (parseFloat(target.value) < 0 || parseInt(target.value) > 1) {
         showerror("Threshold must be between 0 and 1");
         err = true;
       } else {
-        setThres(val);
+        setThres(parseInt(target.value));
       }
       console.log("thres: ", thres);
     } else {
@@ -375,7 +403,20 @@ export default function Home() {
     }
   };
 
-  const [resultsObj, setResults] = useState({});
+
+
+  const [resultsObj, setResults] = useState<ResultsProps>({
+    finalstate: [],
+    time_taken: 0,
+    hurestic: 0,
+    iterations: 0,
+    algorithm: "",
+    restarts: 0,
+    iterRestarts: 0,
+    frekuensi: 0,
+  });
+
+
   const [activeState, setActiveState] = useState("final");
   const [algoLoading, setAlgoLoading] = useState(false);
 
@@ -424,6 +465,7 @@ export default function Home() {
       sendData["thres"] = thres;
       sendData["temp"] = temp;
       sendData["cool"] = cool;
+      console.log();
       sendRequest("/api/simulated-annealing");
     } else if (activeAlgo === "GA") {
       if (GA.pop === -1 || GA.iter === -1) {
@@ -459,11 +501,19 @@ export default function Home() {
     } catch (err) {
       console.log(err);
     }
-    const text = await response?.text();
+
+    const data = await response?.json();
+
+    console.log(data);
+
+    if (data) {
+      setResults(data);
+      cube.final = data.finalstate;
+      cube.createCubeWithMatric(data.finalstate);
+      setActiveState("final");
+    }
 
     setAlgoLoading(false);
-
-    alert(text);
   };
   return (
     <div>
@@ -537,7 +587,7 @@ export default function Home() {
               </button>
             </div>
 
-            {Object.keys(resultsObj).length > 0 ? <Results /> : null}
+            {resultsObj.finalstate.length > 0 ? <Results results={resultsObj} /> : null}
 
             <aside>
               <section id="menu">
@@ -691,7 +741,7 @@ export default function Home() {
                 <button onClick={onSubmit} className="button">
                   Solve
                 </button>
-                {Object.keys(resultsObj).length > 0 ? (
+                {resultsObj.finalstate.length > 0 ? (
                   <section className="states">
                     <label htmlFor="state">State</label>
                     <div>
