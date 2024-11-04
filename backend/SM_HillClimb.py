@@ -41,8 +41,8 @@ def sideways_move_hill_climbing(cube, max_side_moves):
     max_no_improvement = max_side_moves  # Batas iterasi tanpa perbaikan
     fitnesses = []
     
+    start = time.time()
     while True:
-        start = time.time()
         neighbors = generate_neighbors(current_state)
         best_neighbor = None
         best_heuristic = current_heuristic
