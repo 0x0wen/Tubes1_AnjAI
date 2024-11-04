@@ -75,6 +75,7 @@ def geneticAlgorithm(population_size, max_iterations):
     best_cube = None
 
     for iteration in range(max_iterations):
+        print("iteration", iteration, "first population", population[0], "with fitness", fitness(population[0]))
         # Evaluate fitness of population
         fitness_values = [1 / (1 + fitness(cube)) for cube in population]
         total_fitness = sum(fitness_values)
@@ -124,12 +125,12 @@ def runGeneticAlgorithm():
                 })
 
                 # Plotting the progress of each experiment
-                # plt.plot(best_scores, label=f'Best (Pop={population_size}, Iter={iterations})')
-                # plt.plot(avg_scores, label=f'Avg (Pop={population_size}, Iter={iterations})')
-                # plt.xlabel('Iterations')
-                # plt.ylabel('Objective Function Value')
-                # plt.legend()
-                # plt.show()
+                plt.plot(best_scores, label=f'Best (Pop={population_size}, Iter={iterations})')
+                plt.plot(avg_scores, label=f'Avg (Pop={population_size}, Iter={iterations})')
+                plt.xlabel('Iterations')
+                plt.ylabel('Objective Function Value')
+                plt.legend()
+                plt.show()
 
     # Print experiment results
     for result in results:
