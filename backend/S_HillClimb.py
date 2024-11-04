@@ -2,7 +2,7 @@ import numpy as np
 from itertools import product
 import random   
 from cube import initialize_cube, fitness
-# import time
+import time
 
 #menghasilkan semua kemungkinan state tetangga dengan menukar 2 angka
 def generate_neighbors(cube):
@@ -31,8 +31,10 @@ def stochastic_hill_climbing(cube):
     iterations = 0  # Inisialisasi variabel iterations
     max_attempts = 100  # Batas maksimal pemilihan acak tanpa perbaikan
     attempts = 0  # Counter untuk melacak jumlah pemilihan acak tanpa perbaikan
+    fitnesses = []
     
     while True:
+        start = time.time()
         neighbors = generate_neighbors(current_state)
         
         # Ambil satu tetangga secara acak
@@ -50,10 +52,13 @@ def stochastic_hill_climbing(cube):
         current_state = random_neighbor
         current_heuristic = random_neighbor_heuristic
         print(iterations, current_heuristic)
+        fitnesses.append(current_heuristic)
         iterations += 1
         attempts = 0  # Reset counter jika ada perbaikan
     
-    return current_state
+    end = time.time()
+    time_taken = end - start
+    return current_state, current_heuristic, fitnesses, time_taken, iterations
 
 # initial_cube = initialize_cube()
 # # print(initial_cube)

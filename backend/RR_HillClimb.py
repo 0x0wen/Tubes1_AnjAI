@@ -1,7 +1,7 @@
 import numpy as np
 from itertools import product
 from cube import initialize_cube, fitness
-#import time
+import time
 
 #menghasilkan semua kemungkinan state tetangga dengan menukar 2 angka
 def generate_neighbors(cube):
@@ -27,12 +27,16 @@ def generate_neighbors(cube):
 # Hill Climbing Algorithm
 def random_restart_hill_climbing(restart_limit, cube):
     optimal_states = []
+    iterations = []  # iterasi per restart
+    wholeIterations = 1  # iterasi total dari algoritma
+    fitnesses = [] # fitness total dari algoritma
     
     for _ in range(restart_limit):
         current_heuristic = fitness(cube)
-        iterations = 1  # Track the number of iterations
+        iteration = 1  # Track the number of iterations
         
         while True:
+            start = time.time()
             #mulai time
             neighbors = generate_neighbors(current_state)
             best_neighbor = None
@@ -48,18 +52,24 @@ def random_restart_hill_climbing(restart_limit, cube):
             # If no better neighbor is found, terminate
             if best_neighbor is None:
                 optimal_states.append(current_state)
+                iterations.append(iteration)
                 break
             
             # Move to the best neighbor
             current_state = best_neighbor
             current_heuristic = best_heuristic
-            print(iterations, current_heuristic)
-            iterations += 1
+            print(iteration, current_heuristic)
+            fitnesses.append(current_heuristic)
+            iteration += 1
+            wholeIterations += 1
             
     #mencari state dengan heuristic terendah untuk di return
     best_state = min(optimal_states, key=fitness)
-    
-    return best_state
+    end = time.time()
+    time_taken = end - start
+    #return state akhir, objective function yang dicapai, trus fitness sama wholeiterations buat bikin plot, durasi, banyak restart, sama iterasi per restart
+    return best_state, current_heuristic, fitnesses, wholeIterations, time_taken, restart_limit, iterations
+
 
 # time_start = time.time()
 # solved_cube = random_restart_hill_climbing(3)

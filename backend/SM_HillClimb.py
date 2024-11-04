@@ -2,7 +2,7 @@ import numpy as np
 from itertools import product
 from concurrent.futures import ThreadPoolExecutor
 from cube import initialize_cube, fitness
-# import time
+import time
 
 #menghasilkan semua kemungkinan state tetangga dengan menukar 2 angka
 def generate_neighbors(cube):
@@ -39,8 +39,10 @@ def sideways_move_hill_climbing(cube, max_side_moves):
     iterations = 1  # Inisialisasi variabel iterations
     no_improvement_count = 0  # Counter untuk melacak iterasi tanpa perbaikan
     max_no_improvement = max_side_moves  # Batas iterasi tanpa perbaikan
+    fitnesses = []
     
     while True:
+        start = time.time()
         neighbors = generate_neighbors(current_state)
         best_neighbor = None
         best_heuristic = current_heuristic
@@ -68,9 +70,12 @@ def sideways_move_hill_climbing(cube, max_side_moves):
             current_heuristic = best_heuristic
         
         print(iterations, current_heuristic)
+        fitnesses.append(current_heuristic)
         iterations += 1
     
-    return current_state
+    end = time.time()
+    time_taken = end - start
+    return current_state, current_heuristic, fitnesses, time_taken, iterations
 
 # initial_cube = initialize_cube()
 # # print(initial_cube)

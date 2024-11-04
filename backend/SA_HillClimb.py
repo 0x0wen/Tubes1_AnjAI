@@ -3,7 +3,7 @@ from itertools import product
 import sys
 import os
 from cube import initialize_cube, fitness
-# import time
+import time
 
 #menghasilkan semua kemungkinan state tetangga dengan menukar 2 angka
 def generate_neighbors(cube):
@@ -31,9 +31,10 @@ def steepest_ascent_hill_climbing(cube):
     current_state = cube
     current_heuristic = fitness(current_state)
     iterations = 1  # Track the number of iterations
+    fitnesses = []
     
     while True:
-        #mulai time
+        start = time.time()
         neighbors = generate_neighbors(current_state)
         best_neighbor = None
         best_heuristic = current_heuristic
@@ -53,9 +54,12 @@ def steepest_ascent_hill_climbing(cube):
         current_state = best_neighbor
         current_heuristic = best_heuristic
         print(iterations, current_heuristic)
+        fitnesses.append(current_heuristic)
         iterations += 1
     
-    return current_state
+    endtime = time.time()
+    time_taken = endtime - start 
+    return current_state, current_heuristic, fitnesses, time_taken, iterations
 
 # initial_cube = initialize_cube()
 # # print(initial_cube)
