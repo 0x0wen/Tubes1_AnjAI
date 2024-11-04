@@ -33,8 +33,8 @@ def stochastic_hill_climbing(cube):
     attempts = 0  # Counter untuk melacak jumlah pemilihan acak tanpa perbaikan
     fitnesses = []
     
+    start = time.time()
     while True:
-        start = time.time()
         neighbors = generate_neighbors(current_state)
         
         # Ambil satu tetangga secara acak

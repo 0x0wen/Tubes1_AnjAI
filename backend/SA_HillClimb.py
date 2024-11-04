@@ -33,8 +33,8 @@ def steepest_ascent_hill_climbing(cube):
     iterations = 1  # Track the number of iterations
     fitnesses = []
     
+    start = time.time()
     while True:
-        start = time.time()
         neighbors = generate_neighbors(current_state)
         best_neighbor = None
         best_heuristic = current_heuristic
