@@ -34,11 +34,20 @@ ARR = np.array([[[25, 16, 80, 104, 90],
         [78, 54, 99, 24, 60],
         [36, 110, 46, 22, 101]]])
 
-def simulatedAnnealing(n, initialTemperature, coolingRate):
+def createNewSolution(newSolution):
+    i1, j1, k1, i2, j2, k2 = random.choices(range(5), k=6)
+    newSolution[i1][j1][k1], newSolution[i2][j2][k2] = newSolution[i2][j2][k2], newSolution[i1][j1][k1]
+    return newSolution
+
+def simulatedAnnealing(n, initialTemperature, coolingRate, threshold):
     currentSolution = initialize_cube()
     currentScore = fitness(currentSolution)
     temperature = initialTemperature
     sumStuck = 0
+    iteration = 0
+    fitnesses = []
+    acceptanceProbabilities = []
+    states = []
     print("Fisrt configuration (5x5x5 Magic Cube):")
     print(currentSolution)
     print(f"First score: {currentScore}")
@@ -48,9 +57,7 @@ def simulatedAnnealing(n, initialTemperature, coolingRate):
             break
 
         newSolution = np.copy(currentSolution)
-        i1, j1, k1, i2, j2, k2 = random.choices(range(n), k=6)
-
-        newSolution[i1][j1][k1], newSolution[i2][j2][k2] = newSolution[i2][j2][k2], newSolution[i1][j1][k1]
+        newSolution = createNewSolution(newSolution)
         newScore = fitness(newSolution)
 
         if newScore < currentScore:
@@ -59,22 +66,27 @@ def simulatedAnnealing(n, initialTemperature, coolingRate):
         else:
             acceptanceProbability = np.exp((newScore - currentScore)*(-1) / temperature)
             temp = random.random()
-            if 0.9999999999999999 < acceptanceProbability:
+            if threshold < acceptanceProbability:
                 currentSolution = newSolution
                 currentScore = newScore
             else:
                 sumStuck += 1
 
         temperature *= coolingRate
-
-    return currentSolution, currentScore, sumStuck
+        iteration += 1
+        fitnesses.append(currentScore)
+        acceptanceProbabilities.append(acceptanceProbability)
+        states.append(currentSolution)
+    
+    return currentSolution, currentScore, sumStuck, iteration, fitnesses, acceptanceProbabilities, states
 
 n = 5 
-initialTemperature = 10000000000000000000000000
-coolingRate = 0.99
+initialTemperature = 100000
+coolingRate = 0.9999
+threshold = 0.99
 startTime = time.time()
 
-bestSolution, bestScore, sumStuck = simulatedAnnealing(n, initialTemperature, coolingRate)
+bestSolution, bestScore, sumStuck, iteration, fitnesses, acceptanceProbabilities, states = simulatedAnnealing(n, initialTemperature, coolingRate, threshold)
 endTime = time.time()
 
 print("Best configuration (5x5x5 Magic Cube):")
