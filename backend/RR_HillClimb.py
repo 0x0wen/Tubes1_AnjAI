@@ -7,7 +7,7 @@ import time
 def generate_neighbors(cube):
     neighbors = []
     
-    N = len(cube)  # Assuming cube is a 3D numpy array with shape (N, N, N)
+    N = len(cube)
     
     indices = np.array(list(product(range(N), repeat=3)))
     
