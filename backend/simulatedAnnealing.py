@@ -42,14 +42,12 @@ def createNewSolution(newSolution):
 def simulatedAnnealing(cube, initialTemperature, coolingRate, threshold):
     currentScore = fitness(cube)
     temperature = initialTemperature
+    currentSolution = cube
     sumStuck = 0
     iteration = 0
     fitnesses = []
     acceptanceProbabilities = []
     states = []
-    print("Fisrt configuration (5x5x5 Magic Cube):")
-    print(currentSolution)
-    print(f"First score: {currentScore}")
 
     while temperature > 1:
         if currentScore == 0:

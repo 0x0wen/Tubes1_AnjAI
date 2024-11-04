@@ -136,6 +136,3 @@ def runGeneticAlgorithm():
     for result in results:
         print(f"Population: {result['population_size']}, Iterations: {result['iterations']}, Run: {result['run']}, "
               f"Final Best Score: {result['final_best_score']}, Cube: {result['cube']}, Duration: {result['duration']:.2f}s")
-
-
-runGeneticAlgorithm()

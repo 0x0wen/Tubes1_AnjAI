@@ -12,7 +12,11 @@ from RR_HillClimb import random_restart_hill_climbing
 
 from simulatedAnnealing import simulatedAnnealing
 
+from geneticAlgorithm import geneticAlgorithm
+
 from plot import save_plot
+
+from plotGA import save_plotGA
 
 
 app = Flask(__name__)
@@ -111,7 +115,7 @@ def hillClimbRando():
     return jsonify(response)
 
 @app.route("/api/simulated-annealing", methods=['POST'])
-def simulatedAnnealing():
+def simulatedAnneal():
     data = request.get_json()
     cube = np.array(data.get("cube", []))
     thres = data["thres"]
@@ -143,13 +147,32 @@ def simulatedAnnealing():
     
 
 @app.route("/api/genetic-algorithm", methods=['POST'])
-def geneticAlgorithm():
+def geneticAlgorit():
     data = request.get_json()
     cube = np.array(data.get("cube", []))
     populasi = data["pop"]
     iterasi = data["iter"]
-    print(data)
-    return 'Genetic maybe up but syndrome goes down!'
+    
+    
+    timeStart = time.time()
+    final_best_score, best_scores, avg_scores, best_cube  = geneticAlgorithm(populasi, iterasi)
+    timeEnd = time.time()
+    
+    time_taken = timeEnd - timeStart
+    
+    
+    finalState = best_cube.tolist()
+    
+    save_plotGA(iterasi + 1, best_scores, avg_scores,"plotObjFunc")
+    
+    response = {
+        "finalstate": finalState,
+        "hurestic": final_best_score,
+        "algorithm" : "genetic",
+        "time_taken": time_taken,
+    }
+    
+    return jsonify(response)
 
 if __name__ == "__main__":
     app.run(host="localhost", port=5000, debug=True)

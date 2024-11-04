@@ -371,7 +371,7 @@ export default function Home() {
       }
       console.log("restarts: ", restarts);
     } else if (what === "temp") {
-      if (parseFloat(target.value) < 1) {
+      if (parseInt(target.value) < 1) {
         showerror("Temperature must be greater or equal to 1");
         err = true;
       } else {
@@ -379,11 +379,11 @@ export default function Home() {
       }
       console.log("temp: ", temp);
     } else if (what === "cool") {
-      if (parseInt(target.value) < 0 || parseInt(target.value) > 1) {
+      if (parseFloat(target.value) < 0 || parseInt(target.value) > 1) {
         showerror("Cooling rate must be between 0 and 1");
         err = true;
       } else {
-        setCool(parseInt(target.value));
+        setCool(parseFloat(target.value));
       }
       console.log("cool: ", cool);
     } else if (what === "thres") {
@@ -391,7 +391,7 @@ export default function Home() {
         showerror("Threshold must be between 0 and 1");
         err = true;
       } else {
-        setThres(parseInt(target.value));
+        setThres(parseFloat(target.value));
       }
       console.log("thres: ", thres);
     } else {
